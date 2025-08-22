@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/services/firebase_service.dart';
+import '../../../shared/services/supabase_service.dart';
 
 class DashboardData {
   final int totalEvents;
@@ -22,14 +22,14 @@ class DashboardData {
 }
 
 final dashboardProvider = FutureProvider<DashboardData>((ref) async {
-  final firebaseService = ref.read(firebaseServiceProvider);
+  final supabaseService = ref.read(supabaseServiceProvider);
   
   try {
     // Fetch all the data concurrently
-    final eventStatsFuture = firebaseService.getEventStats();
-    final bookingStatsFuture = firebaseService.getBookingStats();
-    final inventoryStatsFuture = firebaseService.getInventoryStats();
-    final recentEventsFuture = firebaseService.getRecentEvents();
+    final eventStatsFuture = supabaseService.getEventStats();
+    final bookingStatsFuture = supabaseService.getBookingStats();
+    final inventoryStatsFuture = supabaseService.getInventoryStats();
+    final recentEventsFuture = supabaseService.getRecentEvents();
 
     final results = await Future.wait([
       eventStatsFuture,
@@ -53,7 +53,7 @@ final dashboardProvider = FutureProvider<DashboardData>((ref) async {
       recentEvents: recentEvents,
     );
   } catch (e) {
-    // Return default data if Firebase fails
+    // Return default data if Supabase fails
     return DashboardData(
       totalEvents: 0,
       upcomingEvents: 0,

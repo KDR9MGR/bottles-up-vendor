@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../providers/dashboard_provider.dart';
+import '../../../shared/widgets/responsive_wrapper.dart';
+import '../../../core/utils/responsive_utils.dart' as utils;
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -17,9 +20,9 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: ResponsiveText.titleLarge(
           'Bottles Up Vendor',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -49,14 +52,13 @@ class DashboardScreen extends ConsumerWidget {
                 color: theme.colorScheme.error,
               ),
               const SizedBox(height: 16),
-              Text(
+              ResponsiveText.titleLarge(
                 'Unable to load dashboard',
-                style: theme.textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
-              Text(
+              ResponsiveText.bodyMedium(
                 'Please check your connection and try again',
-                style: theme.textTheme.bodyMedium?.copyWith(
+                style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -76,15 +78,14 @@ class DashboardScreen extends ConsumerWidget {
   Widget _buildDashboardContent(BuildContext context, DashboardData data) {
     final theme = Theme.of(context);
     
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return ResponsiveWrapper(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(utils.ResponsiveUtils.getResponsivePadding(context)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Welcome Section
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
+          ResponsiveContainer(
             decoration: AppTheme.darkContainerDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,23 +95,23 @@ class DashboardScreen extends ConsumerWidget {
                     Icon(
                       Ionicons.storefront_outline,
                       color: theme.colorScheme.primary,
-                      size: 28,
+                      size: utils.ResponsiveUtils.getResponsiveIconSize(context),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.75),
                     Expanded(
-                      child: Text(
+                      child: ResponsiveText.headlineSmall(
                         'Welcome to Bottles Up Vendor!',
-                        style: theme.textTheme.headlineSmall?.copyWith(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                Text(
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.75),
+                ResponsiveText.bodyLarge(
                   'Manage your events, inventory, and bookings efficiently',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -118,24 +119,18 @@ class DashboardScreen extends ConsumerWidget {
             ),
           ),
           
-          const SizedBox(height: 24),
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 1.5),
           
           // Stats Cards
-          Text(
+          ResponsiveText.titleLarge(
             'Business Overview',
-            style: theme.textTheme.titleLarge?.copyWith(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
           
-          GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 1.1,
+          ResponsiveGrid(
             children: [
               _buildStatCard(
                 context,
@@ -172,24 +167,24 @@ class DashboardScreen extends ConsumerWidget {
             ],
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2),
           
           // Quick Actions
-          Text(
+          ResponsiveText.titleLarge(
             'Quick Actions',
-            style: theme.textTheme.titleLarge?.copyWith(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
           
-          GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 1.3,
+          ResponsiveGrid(
+            childAspectRatio: getValueForScreenType<double>(
+              context: context,
+              mobile: 1.3,
+              tablet: 1.4,
+              desktop: 1.5,
+            ),
             children: [
               _buildActionCard(
                 context,
@@ -226,8 +221,9 @@ class DashboardScreen extends ConsumerWidget {
             ],
           ),
           
-          const SizedBox(height: 40),
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2.5),
         ],
+        ),
       ),
     );
   }
@@ -242,8 +238,7 @@ class DashboardScreen extends ConsumerWidget {
   }) {
     final theme = Theme.of(context);
     
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return ResponsiveContainer(
       decoration: AppTheme.darkCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,28 +250,28 @@ class DashboardScreen extends ConsumerWidget {
               Icon(
                 icon,
                 color: color,
-                size: 28,
+                size: utils.ResponsiveUtils.getResponsiveIconSize(context),
               ),
-              Text(
+              ResponsiveText.headlineMedium(
                 value,
-                style: theme.textTheme.headlineMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
+          ResponsiveText.titleSmall(
             title,
-            style: theme.textTheme.titleSmall?.copyWith(
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
+          SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.25),
+          ResponsiveText.bodySmall(
             subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
@@ -293,20 +288,25 @@ class DashboardScreen extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
+    final iconContainerSize = getValueForScreenType<double>(
+      context: context,
+      mobile: 48.0,
+      tablet: 52.0,
+      desktop: 56.0,
+    );
     
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(20),
+      child: ResponsiveContainer(
         decoration: AppTheme.darkCardDecoration,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: iconContainerSize,
+              height: iconContainerSize,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -314,20 +314,20 @@ class DashboardScreen extends ConsumerWidget {
               child: Icon(
                 icon,
                 color: theme.colorScheme.primary,
-                size: 24,
+                size: utils.ResponsiveUtils.getResponsiveIconSize(context),
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
+            SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
+            ResponsiveText.titleSmall(
               title,
-              style: theme.textTheme.titleSmall?.copyWith(
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
+            SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.25),
+            ResponsiveText.bodySmall(
               subtitle,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),

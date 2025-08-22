@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../providers/auth_provider.dart';
+import '../providers/supabase_auth_provider.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
 
@@ -26,7 +26,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   Future<void> _resetPassword() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await ref.read(authProvider.notifier).resetPassword(
+      await ref.read(supabaseAuthProvider.notifier).resetPassword(
         _emailController.text.trim(),
       );
       
@@ -41,7 +41,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
+    final authState = ref.watch(supabaseAuthProvider);
     final theme = Theme.of(context);
 
     // Listen to auth state changes
@@ -53,7 +53,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             backgroundColor: theme.colorScheme.error,
           ),
         );
-        ref.read(authProvider.notifier).clearError();
+        ref.read(supabaseAuthProvider.notifier).clearError();
       }
     });
 

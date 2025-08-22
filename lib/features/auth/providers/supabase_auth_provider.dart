@@ -1,54 +1,60 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../shared/models/user_model.dart';
-import '../services/auth_service.dart';
+import '../services/supabase_auth_service.dart';
 
 // Auth state
-class AuthState {
+class SupabaseAuthState {
   final bool isLoading;
-  final User? firebaseUser;
+  final User? supabaseUser;
   final VendorUser? vendorUser;
   final String? error;
 
-  const AuthState({
+  const SupabaseAuthState({
     this.isLoading = false,
-    this.firebaseUser,
+    this.supabaseUser,
     this.vendorUser,
     this.error,
   });
 
-  AuthState copyWith({
+  SupabaseAuthState copyWith({
     bool? isLoading,
-    User? firebaseUser,
+    User? supabaseUser,
     VendorUser? vendorUser,
     String? error,
   }) {
-    return AuthState(
+    return SupabaseAuthState(
       isLoading: isLoading ?? this.isLoading,
-      firebaseUser: firebaseUser ?? this.firebaseUser,
+      supabaseUser: supabaseUser ?? this.supabaseUser,
       vendorUser: vendorUser ?? this.vendorUser,
       error: error,
     );
   }
 
-  bool get isAuthenticated => firebaseUser != null;
+  bool get isAuthenticated => supabaseUser != null;
   bool get isVendorComplete => vendorUser != null;
 }
 
 // Auth provider
-class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthService _authService;
+class SupabaseAuthNotifier extends StateNotifier<SupabaseAuthState> {
+  final SupabaseAuthService _authService;
 
-  AuthNotifier(this._authService) : super(const AuthState()) {
+  SupabaseAuthNotifier(this._authService) : super(const SupabaseAuthState()) {
     // Listen to auth state changes
-    _authService.authStateChanges.listen((User? user) {
-      if (user != null) {
-        _loadVendorUser(user);
+    _authService.authStateChanges.listen((AuthState authState) {
+      if (authState.session?.user != null) {
+        _loadVendorUser(authState.session!.user);
       } else {
-        state = const AuthState();
+        state = const SupabaseAuthState();
       }
     });
+    
+    // Check if user is already authenticated
+    final currentUser = _authService.currentUser;
+    if (currentUser != null) {
+      _loadVendorUser(currentUser);
+    }
   }
 
   // Sign in
@@ -92,9 +98,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       // User will be loaded via auth state listener
     } catch (e) {
+      String errorMessage = e.toString();
+      
+      // Provide more user-friendly error messages
+      if (errorMessage.contains('Database setup required') || 
+          errorMessage.contains('Vendors table does not exist') ||
+          errorMessage.contains('relation "vendors" does not exist')) {
+        errorMessage = 'DATABASE_SETUP_REQUIRED';
+      } else if (errorMessage.contains('duplicate key')) {
+        errorMessage = 'An account with this email already exists.';
+      } else if (errorMessage.contains('Database error')) {
+        errorMessage = 'Registration failed due to a database error. Please try again.';
+      }
+      
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: errorMessage,
       );
     }
   }
@@ -105,7 +124,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     
     try {
       await _authService.signOut();
-      state = const AuthState();
+      state = const SupabaseAuthState();
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -145,15 +164,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   // Load vendor user data
-  Future<void> _loadVendorUser(User firebaseUser) async {
+  Future<void> _loadVendorUser(User supabaseUser) async {
     state = state.copyWith(
       isLoading: true,
-      firebaseUser: firebaseUser,
+      supabaseUser: supabaseUser,
       error: null,
     );
 
     try {
-      final vendorUser = await _authService.getVendorUser(firebaseUser.uid);
+      final vendorUser = await _authService.getVendorUser(supabaseUser.id);
       state = state.copyWith(
         isLoading: false,
         vendorUser: vendorUser,
@@ -168,37 +187,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Check permission
   Future<bool> hasPermission(String permission) async {
-    if (state.firebaseUser == null) return false;
+    if (state.supabaseUser == null) return false;
     return await _authService.hasPermission(
-      state.firebaseUser!.uid,
+      state.supabaseUser!.id,
       permission,
     );
   }
 }
 
 // Auth provider
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  return AuthNotifier(authService);
+final supabaseAuthProvider = StateNotifierProvider<SupabaseAuthNotifier, SupabaseAuthState>((ref) {
+  final authService = ref.watch(supabaseAuthServiceProvider);
+  return SupabaseAuthNotifier(authService);
 });
 
 // Convenience providers
 final isAuthenticatedProvider = Provider<bool>((ref) {
-  return ref.watch(authProvider).isAuthenticated;
+  return ref.watch(supabaseAuthProvider).isAuthenticated;
 });
 
 final currentUserProvider = Provider<User?>((ref) {
-  return ref.watch(authProvider).firebaseUser;
+  return ref.watch(supabaseAuthProvider).supabaseUser;
 });
 
 final currentVendorUserProvider = Provider<VendorUser?>((ref) {
-  return ref.watch(authProvider).vendorUser;
+  return ref.watch(supabaseAuthProvider).vendorUser;
 });
 
 final authErrorProvider = Provider<String?>((ref) {
-  return ref.watch(authProvider).error;
+  return ref.watch(supabaseAuthProvider).error;
 });
 
 final authLoadingProvider = Provider<bool>((ref) {
-  return ref.watch(authProvider).isLoading;
-}); 
+  return ref.watch(supabaseAuthProvider).isLoading;
+});

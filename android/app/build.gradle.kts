@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.bottles_up_vendor"
-    compileSdk = 35  // Updated for latest Android APIs and Firebase compatibility
+    compileSdk = 36  // Updated for latest Android APIs and Firebase compatibility
     ndkVersion = "27.0.12077973"  // Updated for Firebase compatibility
 
     compileOptions {
@@ -25,8 +25,8 @@ android {
         applicationId = "com.example.bottles_up_vendor"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23  // Updated for Firebase compatibility
-        targetSdk = flutter.targetSdkVersion
+        minSdkVersion(flutter.minSdkVersion)  // Updated for Firebase compatibility
+        targetSdkVersion(flutter.targetSdkVersion)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

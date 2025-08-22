@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
-import '../../features/auth/providers/auth_provider.dart';
+import '../../features/auth/screens/database_setup_screen.dart';
+import '../../features/auth/screens/debug_screen.dart';
+import '../../features/auth/providers/supabase_auth_provider.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
 import '../../features/clubs/screens/clubs_list_screen.dart';
 import '../../features/clubs/screens/club_details_screen.dart';
@@ -24,6 +26,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String forgotPassword = '/forgot-password';
+  static const String databaseSetup = '/database-setup';
+  static const String debug = '/debug';
   static const String dashboard = '/dashboard';
   static const String clubs = '/clubs';
   static const String clubDetails = '/clubs/:clubId';
@@ -108,7 +112,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = isAuthenticated;
       final isLoggingIn = state.uri.path == AppRoutes.login || 
                           state.uri.path == AppRoutes.register || 
-                          state.uri.path == AppRoutes.forgotPassword;
+                          state.uri.path == AppRoutes.forgotPassword ||
+                          state.uri.path == AppRoutes.databaseSetup ||
+                          state.uri.path == AppRoutes.debug;
 
       // If not logged in and not on login/register/forgot password page, redirect to login
       if (!isLoggedIn && !isLoggingIn) {
@@ -147,6 +153,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => SlideTransitionPage(
           name: 'forgotPassword',
           child: const ForgotPasswordScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.databaseSetup,
+        name: 'databaseSetup',
+        pageBuilder: (context, state) => FadeTransitionPage(
+          name: 'databaseSetup',
+          child: const DatabaseSetupScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.debug,
+        name: 'debug',
+        pageBuilder: (context, state) => FadeTransitionPage(
+          name: 'debug',
+          child: const DebugScreen(),
         ),
       ),
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
-import '../providers/auth_provider.dart';
+import '../providers/supabase_auth_provider.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
+import '../../../shared/widgets/responsive_wrapper.dart';
+import '../../../core/utils/responsive_utils.dart' as utils;
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -28,7 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _signIn() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await ref.read(authProvider.notifier).signIn(
+      await ref.read(supabaseAuthProvider.notifier).signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
@@ -37,7 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
+    final authState = ref.watch(supabaseAuthProvider);
     final theme = Theme.of(context);
 
     // Listen to auth state changes
@@ -49,7 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             backgroundColor: theme.colorScheme.error,
           ),
         );
-        ref.read(authProvider.notifier).clearError();
+        ref.read(supabaseAuthProvider.notifier).clearError();
       }
     });
 
@@ -62,69 +65,89 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-                
-                // Logo and Title
-                Column(
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
+        child: ResponsiveWrapper(
+          centerContent: true,
+          maxWidth: 500,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(utils.ResponsiveUtils.getResponsivePadding(context)),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 1.5),
+                  
+                  // Logo and Title
+                  Column(
+                    children: [
+                      ResponsiveBuilder(
+                        builder: (context, sizingInformation) {
+                          final logoSize = getValueForScreenType<double>(
+                            context: context,
+                            mobile: 80.0,
+                            tablet: 100.0,
+                            desktop: 120.0,
+                          );
+                          final iconSize = getValueForScreenType<double>(
+                            context: context,
+                            mobile: 40.0,
+                            tablet: 50.0,
+                            desktop: 60.0,
+                          );
+                          
+                          return Container(
+                            width: logoSize,
+                            height: logoSize,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.wine_bar,
+                              size: iconSize,
+                              color: theme.colorScheme.onPrimary,
+                            ),
+                          );
+                        },
                       ),
-                      child: Icon(
-                        Icons.wine_bar,
-                        size: 50,
-                        color: theme.colorScheme.onPrimary,
+                      SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
+                      ResponsiveText.headlineLarge(
+                        'Bottles Up',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Bottles Up',
-                      style: theme.textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                      SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
+                      ResponsiveText.titleLarge(
+                        'Vendor Portal',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Vendor Portal',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 48),
-                
-                // Welcome Text
-                Text(
-                  'Welcome back!',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign in to manage your events and bookings',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  
+                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2),
+                  
+                  // Welcome Text
+                  ResponsiveText.headlineSmall(
+                    'Welcome back!',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
+                  ResponsiveText.bodyLarge(
+                    'Sign in to manage your events and bookings',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 
-                const SizedBox(height: 32),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 1.5),
                 
                 // Email Field
                 AuthTextField(
@@ -142,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
                 ),
                 
-                const SizedBox(height: 16),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
                 
                 // Password Field
                 AuthTextField(
@@ -168,7 +191,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 
-                const SizedBox(height: 8),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
                 
                 // Forgot Password
                 Align(
@@ -177,7 +200,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () {
                       context.push('/forgot-password');
                     },
-                    child: Text(
+                    child: ResponsiveText.bodyMedium(
                       'Forgot Password?',
                       style: TextStyle(
                         color: theme.colorScheme.primary,
@@ -186,7 +209,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 
-                const SizedBox(height: 24),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
                 
                 // Sign In Button
                 AuthButton(
@@ -195,21 +218,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   isLoading: authState.isLoading,
                 ),
                 
-                const SizedBox(height: 24),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
                 
                 // Register Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    ResponsiveText.bodyMedium(
                       "Don't have an account? ",
-                      style: theme.textTheme.bodyMedium,
                     ),
                     TextButton(
                       onPressed: () {
                         context.push('/register');
                       },
-                      child: Text(
+                      child: ResponsiveText.bodyMedium(
                         'Sign Up',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
@@ -220,12 +242,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
                 
-                const SizedBox(height: 40),
+                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2),
               ],
             ),
           ),
         ),
       ),
+    )
     );
   }
-} 
+}

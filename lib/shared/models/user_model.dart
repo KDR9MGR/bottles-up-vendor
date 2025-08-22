@@ -145,17 +145,19 @@ class VendorUser {
       id: map['id'] ?? '',
       email: map['email'] ?? '',
       name: map['name'] ?? '',
-      businessName: map['businessName'],
-      phoneNumber: map['phoneNumber'],
-      profileImageUrl: map['profileImageUrl'],
-      isVerified: map['isVerified'] ?? false,
-      createdAt: map['createdAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+      businessName: map['business_name'],
+      phoneNumber: map['phone_number'],
+      profileImageUrl: map['profile_image_url'],
+      isVerified: map['is_verified'] ?? false,
+      createdAt: map['created_at'] != null 
+          ? DateTime.parse(map['created_at'])
           : DateTime.now(),
-      lastLoginAt: map['lastLoginAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'])
+      lastLoginAt: map['last_login_at'] != null 
+          ? DateTime.parse(map['last_login_at'])
           : null,
-      permissions: List<String>.from(map['permissions'] ?? []),
+      permissions: map['permissions'] != null 
+          ? List<String>.from(map['permissions'] as List)
+          : [],
       role: map['role'] ?? 'staff',
     );
   }
@@ -165,12 +167,12 @@ class VendorUser {
       'id': id,
       'email': email,
       'name': name,
-      'businessName': businessName,
-      'phoneNumber': phoneNumber,
-      'profileImageUrl': profileImageUrl,
-      'isVerified': isVerified,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'lastLoginAt': lastLoginAt?.millisecondsSinceEpoch,
+      'business_name': businessName,
+      'phone_number': phoneNumber,
+      'profile_image_url': profileImageUrl,
+      'is_verified': isVerified,
+      'created_at': createdAt.toIso8601String(),
+      'last_login_at': lastLoginAt?.toIso8601String(),
       'permissions': permissions,
       'role': role,
     };

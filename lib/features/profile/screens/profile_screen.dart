@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/models/user_model.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../auth/providers/supabase_auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -14,21 +12,21 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vendorUser = ref.watch(currentVendorUserProvider);
-    final firebaseUser = ref.watch(currentUserProvider);
-    final authState = ref.watch(authProvider);
+    final supabaseUser = ref.watch(currentUserProvider);
+    final authState = ref.watch(supabaseAuthProvider);
     final theme = Theme.of(context);
 
-    // Create fallback vendor user from Firebase Auth if Firestore data is not available
+    // Create fallback vendor user from Supabase Auth if database data is not available
     VendorUser? displayUser = vendorUser;
-    if (vendorUser == null && firebaseUser != null) {
+    if (vendorUser == null && supabaseUser != null) {
       displayUser = VendorUser(
-        id: firebaseUser.uid,
-        email: firebaseUser.email ?? 'Unknown Email',
-        name: firebaseUser.displayName ?? 'Unknown User',
+        id: supabaseUser.id,
+        email: supabaseUser.email ?? 'Unknown Email',
+        name: supabaseUser.userMetadata?['name'] ?? 'Unknown User',
         businessName: 'Bottles Up Vendor',
-        phoneNumber: firebaseUser.phoneNumber,
-        profileImageUrl: firebaseUser.photoURL,
-        isVerified: firebaseUser.emailVerified,
+        phoneNumber: supabaseUser.userMetadata?['phone_number'],
+        profileImageUrl: supabaseUser.userMetadata?['avatar_url'],
+        isVerified: supabaseUser.emailConfirmedAt != null,
         createdAt: DateTime.now(),
         lastLoginAt: DateTime.now(),
         permissions: ['read_events', 'write_events', 'read_bookings', 'write_bookings', 'read_inventory', 'write_inventory', 'admin'],
@@ -705,7 +703,7 @@ class ProfileScreen extends ConsumerWidget {
     );
     
     if (shouldSignOut == true) {
-      await ref.read(authProvider.notifier).signOut();
+      await ref.read(supabaseAuthProvider.notifier).signOut();
       if (context.mounted) {
         context.go('/login');
       }
