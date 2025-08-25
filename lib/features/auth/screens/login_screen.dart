@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -31,10 +32,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _signIn() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await ref.read(supabaseAuthProvider.notifier).signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+      await ref
+          .read(supabaseAuthProvider.notifier)
+          .signIn(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
     }
   }
 
@@ -69,14 +72,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           centerContent: true,
           maxWidth: 500,
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(utils.ResponsiveUtils.getResponsivePadding(context)),
+            padding: EdgeInsets.all(
+              utils.ResponsiveUtils.getResponsivePadding(context),
+            ),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 1.5),
-                  
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) *
+                        1.5,
+                  ),
+
                   // Logo and Title
                   Column(
                     children: [
@@ -94,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             tablet: 50.0,
                             desktop: 60.0,
                           );
-                          
+
                           return Container(
                             width: logoSize,
                             height: logoSize,
@@ -102,15 +111,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Icon(
-                              Icons.wine_bar,
-                              size: iconSize,
-                              color: theme.colorScheme.onPrimary,
+                            child: SvgPicture.asset(
+                              '/assets/images/app_logo_orange.svg',
+                              color: Colors.black,
                             ),
                           );
                         },
                       ),
-                      SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
+                      SizedBox(
+                        height: utils.ResponsiveUtils.getResponsiveSpacing(
+                          context,
+                        ),
+                      ),
                       ResponsiveText.headlineLarge(
                         'Bottles Up',
                         style: TextStyle(
@@ -118,7 +130,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: theme.colorScheme.primary,
                         ),
                       ),
-                      SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
+                      SizedBox(
+                        height:
+                            utils.ResponsiveUtils.getResponsiveSpacing(
+                              context,
+                            ) *
+                            0.5,
+                      ),
                       ResponsiveText.titleLarge(
                         'Vendor Portal',
                         style: TextStyle(
@@ -127,128 +145,150 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ],
                   ),
-                  
-                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2),
-                  
+
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) * 2,
+                  ),
+
                   // Welcome Text
                   ResponsiveText.headlineSmall(
                     'Welcome back!',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) *
+                        0.5,
+                  ),
                   ResponsiveText.bodyLarge(
                     'Sign in to manage your events and bookings',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                   ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 1.5),
-                
-                // Email Field
-                AuthTextField(
-                  controller: _emailController,
-                  label: 'Email',
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
-                
-                // Password Field
-                AuthTextField(
-                  controller: _passwordController,
-                  label: 'Password',
-                  obscureText: _obscurePassword,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
+
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) *
+                        1.5,
+                  ),
+
+                  // Email Field
+                  AuthTextField(
+                    controller: _emailController,
+                    label: 'Email',
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
                     },
                   ),
-                ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.5),
-                
-                // Forgot Password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      context.push('/forgot-password');
+
+                  SizedBox(
+                    height: utils.ResponsiveUtils.getResponsiveSpacing(context),
+                  ),
+
+                  // Password Field
+                  AuthTextField(
+                    controller: _passwordController,
+                    label: 'Password',
+                    obscureText: _obscurePassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
                     },
-                    child: ResponsiveText.bodyMedium(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                     ),
                   ),
-                ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
-                
-                // Sign In Button
-                AuthButton(
-                  text: 'Sign In',
-                  onPressed: _signIn,
-                  isLoading: authState.isLoading,
-                ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context)),
-                
-                // Register Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ResponsiveText.bodyMedium(
-                      "Don't have an account? ",
-                    ),
-                    TextButton(
+
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) *
+                        0.5,
+                  ),
+
+                  // Forgot Password
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
                       onPressed: () {
-                        context.push('/register');
+                        context.push('/forgot-password');
                       },
                       child: ResponsiveText.bodyMedium(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        'Forgot Password?',
+                        style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
-                  ],
-                ),
-                
-                SizedBox(height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 2),
-              ],
+                  ),
+
+                  SizedBox(
+                    height: utils.ResponsiveUtils.getResponsiveSpacing(context),
+                  ),
+
+                  // Sign In Button
+                  AuthButton(
+                    text: 'Sign In',
+                    onPressed: _signIn,
+                    isLoading: authState.isLoading,
+                  ),
+
+                  SizedBox(
+                    height: utils.ResponsiveUtils.getResponsiveSpacing(context),
+                  ),
+
+                  // Register Link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ResponsiveText.bodyMedium("Don't have an account? "),
+                      TextButton(
+                        onPressed: () {
+                          context.push('/register');
+                        },
+                        child: ResponsiveText.bodyMedium(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(
+                    height:
+                        utils.ResponsiveUtils.getResponsiveSpacing(context) * 2,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    )
     );
   }
 }

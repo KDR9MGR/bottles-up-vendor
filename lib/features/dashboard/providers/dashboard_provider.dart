@@ -1,67 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/services/supabase_service.dart';
+import '../../../shared/models/dashboard_stats.dart';
+import '../../../shared/services/dashboard_service.dart';
 
-class DashboardData {
-  final int totalEvents;
-  final int upcomingEvents;
-  final int totalBookings;
-  final int inventoryCount;
-  final int featuredBottles;
-  final double totalRevenue;
-  final List<Map<String, dynamic>> recentEvents;
+final dashboardServiceProvider = Provider<DashboardService>((ref) {
+  return DashboardService();
+});
 
-  DashboardData({
-    required this.totalEvents,
-    required this.upcomingEvents,
-    required this.totalBookings,
-    required this.inventoryCount,
-    required this.featuredBottles,
-    required this.totalRevenue,
-    required this.recentEvents,
-  });
-}
+final dashboardProvider = FutureProvider<DashboardStats>((ref) async {
+  final dashboardService = ref.read(dashboardServiceProvider);
+  return await dashboardService.getDashboardStats();
+});
 
-final dashboardProvider = FutureProvider<DashboardData>((ref) async {
-  final supabaseService = ref.read(supabaseServiceProvider);
-  
-  try {
-    // Fetch all the data concurrently
-    final eventStatsFuture = supabaseService.getEventStats();
-    final bookingStatsFuture = supabaseService.getBookingStats();
-    final inventoryStatsFuture = supabaseService.getInventoryStats();
-    final recentEventsFuture = supabaseService.getRecentEvents();
+final recentActivityProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final dashboardService = ref.read(dashboardServiceProvider);
+  return await dashboardService.getRecentActivity();
+});
 
-    final results = await Future.wait([
-      eventStatsFuture,
-      bookingStatsFuture,
-      inventoryStatsFuture,
-      recentEventsFuture,
-    ]);
+final topPerformingEventsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final dashboardService = ref.read(dashboardServiceProvider);
+  return await dashboardService.getTopPerformingEvents();
+});
 
-    final eventStats = results[0] as Map<String, dynamic>;
-    final bookingStats = results[1] as Map<String, dynamic>;
-    final inventoryStats = results[2] as Map<String, dynamic>;
-    final recentEvents = results[3] as List<Map<String, dynamic>>;
-
-    return DashboardData(
-      totalEvents: eventStats['total'] ?? 0,
-      upcomingEvents: eventStats['upcoming'] ?? 0,
-      totalBookings: bookingStats['total'] ?? 0,
-      inventoryCount: inventoryStats['total'] ?? 0,
-      featuredBottles: inventoryStats['featured'] ?? 0,
-      totalRevenue: bookingStats['revenue'] ?? 0.0,
-      recentEvents: recentEvents,
-    );
-  } catch (e) {
-    // Return default data if Supabase fails
-    return DashboardData(
-      totalEvents: 0,
-      upcomingEvents: 0,
-      totalBookings: 0,
-      inventoryCount: 0,
-      featuredBottles: 0,
-      totalRevenue: 0.0,
-      recentEvents: [],
-    );
-  }
+final lowStockAlertsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final dashboardService = ref.read(dashboardServiceProvider);
+  return await dashboardService.getLowStockAlerts();
 }); 

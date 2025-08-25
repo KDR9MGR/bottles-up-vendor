@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,61 +42,30 @@ class AppRoutes {
   static const String profile = '/profile';
 }
 
-// Custom page transitions
-class SlideTransitionPage extends CustomTransitionPage<void> {
-  const SlideTransitionPage({
+// Custom page transitions using CupertinoPageRoute
+class CupertinoTransitionPage extends CustomTransitionPage<void> {
+  const CupertinoTransitionPage({
     required super.child,
     required super.name,
     super.arguments,
     super.restorationId,
     super.key,
   }) : super(
-          transitionsBuilder: _slideTransitionsBuilder,
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: _cupertinoTransitionsBuilder,
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 400),
         );
 
-  static Widget _slideTransitionsBuilder(
+  static Widget _cupertinoTransitionsBuilder(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    const begin = Offset(1.0, 0.0);
-    const end = Offset.zero;
-    const curve = Curves.easeInOut;
-
-    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-    var offsetAnimation = animation.drive(tween);
-
-    return SlideTransition(
-      position: offsetAnimation,
-      child: child,
-    );
-  }
-}
-
-class FadeTransitionPage extends CustomTransitionPage<void> {
-  const FadeTransitionPage({
-    required super.child,
-    required super.name,
-    super.arguments,
-    super.restorationId,
-    super.key,
-  }) : super(
-          transitionsBuilder: _fadeTransitionsBuilder,
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 250),
-        );
-
-  static Widget _fadeTransitionsBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return FadeTransition(
-      opacity: animation,
+    return CupertinoPageTransition(
+      primaryRouteAnimation: animation,
+      secondaryRouteAnimation: secondaryAnimation,
+      linearTransition: false,
       child: child,
     );
   }
@@ -134,7 +104,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        pageBuilder: (context, state) => FadeTransitionPage(
+        pageBuilder: (context, state) => CupertinoTransitionPage(
           name: 'login',
           child: const LoginScreen(),
         ),
@@ -142,7 +112,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.register,
         name: 'register',
-        pageBuilder: (context, state) => SlideTransitionPage(
+        pageBuilder: (context, state) => CupertinoTransitionPage(
           name: 'register',
           child: const RegisterScreen(),
         ),
@@ -150,7 +120,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.forgotPassword,
         name: 'forgotPassword',
-        pageBuilder: (context, state) => SlideTransitionPage(
+        pageBuilder: (context, state) => CupertinoTransitionPage(
           name: 'forgotPassword',
           child: const ForgotPasswordScreen(),
         ),
@@ -158,7 +128,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.databaseSetup,
         name: 'databaseSetup',
-        pageBuilder: (context, state) => FadeTransitionPage(
+        pageBuilder: (context, state) => CupertinoTransitionPage(
           name: 'databaseSetup',
           child: const DatabaseSetupScreen(),
         ),
@@ -166,7 +136,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.debug,
         name: 'debug',
-        pageBuilder: (context, state) => FadeTransitionPage(
+        pageBuilder: (context, state) => CupertinoTransitionPage(
           name: 'debug',
           child: const DebugScreen(),
         ),
@@ -180,7 +150,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.dashboard,
             name: 'dashboard',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'dashboard',
               child: const DashboardScreen(),
             ),
@@ -190,7 +160,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.clubs,
             name: 'clubs',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'clubs',
               child: const ClubsListScreen(),
             ),
@@ -198,7 +168,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'create',
                 name: 'createClub',
-                pageBuilder: (context, state) => SlideTransitionPage(
+                pageBuilder: (context, state) => CupertinoTransitionPage(
                   name: 'createClub',
                   child: const CreateClubScreen(),
                 ),
@@ -206,7 +176,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: ':clubId',
                 name: 'clubDetails',
-                pageBuilder: (context, state) => SlideTransitionPage(
+                pageBuilder: (context, state) => CupertinoTransitionPage(
                   name: 'clubDetails',
                   child: ClubDetailsScreen(
                     clubId: state.pathParameters['clubId']!,
@@ -220,7 +190,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.events,
             name: 'events',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'events',
               child: const EventsListScreen(),
             ),
@@ -228,7 +198,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'create',
                 name: 'createEvent',
-                pageBuilder: (context, state) => SlideTransitionPage(
+                pageBuilder: (context, state) => CupertinoTransitionPage(
                   name: 'createEvent',
                   child: const CreateEventScreen(),
                 ),
@@ -236,7 +206,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: ':eventId',
                 name: 'eventDetails',
-                pageBuilder: (context, state) => SlideTransitionPage(
+                pageBuilder: (context, state) => CupertinoTransitionPage(
                   name: 'eventDetails',
                   child: EventDetailsScreen(
                     eventId: state.pathParameters['eventId']!,
@@ -250,7 +220,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.inventory,
             name: 'inventory',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'inventory',
               child: const InventoryScreen(),
             ),
@@ -260,7 +230,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.bookings,
             name: 'bookings',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'bookings',
               child: const BookingsScreen(),
             ),
@@ -270,7 +240,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.analytics,
             name: 'analytics',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'analytics',
               child: const Scaffold(
                 appBar: null,
@@ -285,7 +255,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.profile,
             name: 'profile',
-            pageBuilder: (context, state) => FadeTransitionPage(
+            pageBuilder: (context, state) => CupertinoTransitionPage(
               name: 'profile',
               child: const ProfileScreen(),
             ),
