@@ -337,48 +337,53 @@ class DashboardScreen extends ConsumerWidget {
                 )
                 : null,
       ),
+      padding: EdgeInsets.all(
+        utils.ResponsiveUtils.getResponsiveCardPadding(context) * 0.85,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: color, size: 24),
+                child: Icon(icon, color: color, size: 22),
               ),
               if (trend != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        isAlert
-                            ? theme.colorScheme.error.withOpacity(0.1)
-                            : color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    trend,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: isAlert ? theme.colorScheme.error : color,
-                      fontWeight: FontWeight.w600,
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          isAlert
+                              ? theme.colorScheme.error.withOpacity(0.1)
+                              : color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      trend,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: isAlert ? theme.colorScheme.error : color,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
             ],
           ),
-          SizedBox(
-            height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.75,
-          ),
+          const SizedBox(height: 8),
           ResponsiveText.headlineMedium(
             value,
             style: TextStyle(
@@ -388,20 +393,22 @@ class DashboardScreen extends ConsumerWidget {
                       ? theme.colorScheme.error
                       : theme.colorScheme.onSurface,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(
-            height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.25,
-          ),
+          const SizedBox(height: 2),
           ResponsiveText.titleSmall(
             title,
             style: const TextStyle(fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(
-            height: utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.25,
-          ),
+          const SizedBox(height: 2),
           ResponsiveText.bodySmall(
             subtitle,
             style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -422,33 +429,35 @@ class DashboardScreen extends ConsumerWidget {
       borderRadius: BorderRadius.circular(16),
       child: ResponsiveContainer(
         decoration: AppTheme.darkCardDecoration,
+        padding: EdgeInsets.all(
+          utils.ResponsiveUtils.getResponsiveCardPadding(context) * 0.85,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(icon, color: theme.colorScheme.primary, size: 28),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 24),
             ),
-            SizedBox(
-              height: utils.ResponsiveUtils.getResponsiveSpacing(context),
-            ),
+            const SizedBox(height: 6),
             ResponsiveText.titleSmall(
               title,
               style: const TextStyle(fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(
-              height:
-                  utils.ResponsiveUtils.getResponsiveSpacing(context) * 0.25,
-            ),
+            const SizedBox(height: 2),
             ResponsiveText.bodySmall(
               subtitle,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

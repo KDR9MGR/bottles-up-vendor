@@ -30,6 +30,12 @@
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
       "env": {}
+    },
+     "dart": {
+      "command": "dart",
+      "args": [
+        "mcp-server"
+      ]
     }
   }
 }

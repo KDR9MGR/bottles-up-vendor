@@ -21,7 +21,7 @@ dependencies:
   supabase_flutter: ^2.8.0
   
   # UI & Theming
-  flex_color_scheme: ^8.2.0
+  flex_color_scheme: ^8.3.0
   google_fonts: ^6.2.1
   ionicons: ^0.2.2
   

@@ -20,6 +20,10 @@ import '../../features/events/screens/create_event_screen.dart';
 import '../../features/events/screens/inventory_screen.dart';
 import '../../features/events/screens/bookings_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/business_details_screen.dart';
+import '../../features/profile/screens/security_screen.dart';
+import '../../features/profile/screens/notifications_screen.dart';
 import '../../shared/widgets/main_shell.dart';
 
 // Route names
@@ -259,6 +263,40 @@ final routerProvider = Provider<GoRouter>((ref) {
               name: 'profile',
               child: const ProfileScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: 'editProfile',
+                pageBuilder: (context, state) => CupertinoTransitionPage(
+                  name: 'editProfile',
+                  child: const EditProfileScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'business',
+                name: 'businessDetails',
+                pageBuilder: (context, state) => CupertinoTransitionPage(
+                  name: 'businessDetails',
+                  child: const BusinessDetailsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'security',
+                name: 'security',
+                pageBuilder: (context, state) => CupertinoTransitionPage(
+                  name: 'security',
+                  child: const SecurityScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'notifications',
+                name: 'notifications',
+                pageBuilder: (context, state) => CupertinoTransitionPage(
+                  name: 'notifications',
+                  child: const NotificationsScreen(),
+                ),
+              ),
+            ],
           ),
         ],
       ),

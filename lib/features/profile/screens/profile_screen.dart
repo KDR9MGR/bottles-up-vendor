@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/models/user_model.dart';
 import '../../auth/providers/supabase_auth_provider.dart';
+import '../providers/profile_stats_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -14,6 +15,7 @@ class ProfileScreen extends ConsumerWidget {
     final vendorUser = ref.watch(currentVendorUserProvider);
     final supabaseUser = ref.watch(currentUserProvider);
     final authState = ref.watch(supabaseAuthProvider);
+    final profileStatsAsync = ref.watch(profileStatsProvider);
     final theme = Theme.of(context);
 
     // Create fallback vendor user from Supabase Auth if database data is not available
@@ -264,38 +266,81 @@ class ProfileScreen extends ConsumerWidget {
                         const SizedBox(height: 20),
                         
                         // Quick Stats
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildQuickStat(
-                              context,
-                              icon: Ionicons.calendar,
-                              label: 'Events',
-                              value: '4',
+                        profileStatsAsync.when(
+                          data: (stats) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.calendar,
+                                label: 'Events',
+                                value: stats.totalEvents.toString(),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: theme.colorScheme.outline.withOpacity(0.3),
+                              ),
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.cube,
+                                label: 'Items',
+                                value: stats.totalInventoryItems.toString(),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: theme.colorScheme.outline.withOpacity(0.3),
+                              ),
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.star,
+                                label: 'Rating',
+                                value: stats.averageRating > 0
+                                    ? stats.averageRating.toStringAsFixed(1)
+                                    : 'N/A',
+                              ),
+                            ],
+                          ),
+                          loading: () => const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: CircularProgressIndicator(),
                             ),
-                            Container(
-                              width: 1,
-                              height: 40,
-                              color: theme.colorScheme.outline.withOpacity(0.3),
-                            ),
-                            _buildQuickStat(
-                              context,
-                              icon: Ionicons.cube,
-                              label: 'Items',
-                              value: '12',
-                            ),
-                            Container(
-                              width: 1,
-                              height: 40,
-                              color: theme.colorScheme.outline.withOpacity(0.3),
-                            ),
-                            _buildQuickStat(
-                              context,
-                              icon: Ionicons.star,
-                              label: 'Rating',
-                              value: '4.8',
-                            ),
-                          ],
+                          ),
+                          error: (_, __) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.calendar,
+                                label: 'Events',
+                                value: '0',
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: theme.colorScheme.outline.withOpacity(0.3),
+                              ),
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.cube,
+                                label: 'Items',
+                                value: '0',
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: theme.colorScheme.outline.withOpacity(0.3),
+                              ),
+                              _buildQuickStat(
+                                context,
+                                icon: Ionicons.star,
+                                label: 'Rating',
+                                value: 'N/A',
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -314,9 +359,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Edit Profile',
                         subtitle: 'Update your information',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Edit Profile - Coming Soon')),
-                          );
+                          context.push('/profile/edit');
                         },
                       ),
                       _buildActionTile(
@@ -325,9 +368,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Business Details',
                         subtitle: 'Manage business info',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Business Details - Coming Soon')),
-                          );
+                          context.push('/profile/business');
                         },
                       ),
                       _buildActionTile(
@@ -357,9 +398,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Security',
                         subtitle: 'Password & 2FA',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Security Settings - Coming Soon')),
-                          );
+                          context.push('/profile/security');
                         },
                       ),
                       _buildActionTile(
@@ -368,9 +407,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Notifications',
                         subtitle: 'Manage your alerts',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Notification Settings - Coming Soon')),
-                          );
+                          context.push('/profile/notifications');
                         },
                       ),
                       _buildActionTile(

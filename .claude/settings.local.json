@@ -11,7 +11,9 @@
       "Bash(flutter run:*)",
       "Bash(flutter clean:*)",
       "Bash(dart analyze:*)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(flutter --version:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
