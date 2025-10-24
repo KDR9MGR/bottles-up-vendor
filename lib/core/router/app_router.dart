@@ -24,6 +24,11 @@ import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/business_details_screen.dart';
 import '../../features/profile/screens/security_screen.dart';
 import '../../features/profile/screens/notifications_screen.dart';
+import '../../features/profile/screens/help_center_screen.dart';
+import '../../features/profile/screens/contact_support_screen.dart';
+import '../../features/profile/screens/terms_of_service_screen.dart';
+import '../../features/profile/screens/privacy_policy_screen.dart';
+import '../../features/profile/screens/about_screen.dart';
 import '../../shared/widgets/main_shell.dart';
 
 // Route names
@@ -299,6 +304,52 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+
+      // Support routes (global - not inside shell)
+      GoRoute(
+        path: '/support/help',
+        name: 'helpCenter',
+        pageBuilder: (context, state) => CupertinoTransitionPage(
+          name: 'helpCenter',
+          child: const HelpCenterScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/support/contact',
+        name: 'contactSupport',
+        pageBuilder: (context, state) => CupertinoTransitionPage(
+          name: 'contactSupport',
+          child: const ContactSupportScreen(),
+        ),
+      ),
+
+      // Legal routes (global - not inside shell)
+      GoRoute(
+        path: '/legal/terms',
+        name: 'termsOfService',
+        pageBuilder: (context, state) => CupertinoTransitionPage(
+          name: 'termsOfService',
+          child: const TermsOfServiceScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/legal/privacy',
+        name: 'privacyPolicy',
+        pageBuilder: (context, state) => CupertinoTransitionPage(
+          name: 'privacyPolicy',
+          child: const PrivacyPolicyScreen(),
+        ),
+      ),
+
+      // About route (global - not inside shell)
+      GoRoute(
+        path: '/about',
+        name: 'about',
+        pageBuilder: (context, state) => CupertinoTransitionPage(
+          name: 'about',
+          child: const AboutScreen(),
+        ),
       ),
     ],
   );

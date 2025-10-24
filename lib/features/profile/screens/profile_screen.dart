@@ -448,9 +448,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Help Center',
                         subtitle: 'FAQs & support',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Help Center - Coming Soon')),
-                          );
+                          context.push('/support/help');
                         },
                       ),
                       _buildActionTile(
@@ -459,9 +457,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Contact Support',
                         subtitle: 'Get help from our team',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Contact Support - Coming Soon')),
-                          );
+                          context.push('/support/contact');
                         },
                       ),
                       _buildActionTile(
@@ -470,9 +466,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Terms of Service',
                         subtitle: 'Legal terms & conditions',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Terms of Service - Coming Soon')),
-                          );
+                          context.push('/legal/terms');
                         },
                       ),
                       _buildActionTile(
@@ -481,9 +475,7 @@ class ProfileScreen extends ConsumerWidget {
                         title: 'Privacy Policy',
                         subtitle: 'How we protect your data',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Privacy Policy - Coming Soon')),
-                          );
+                          context.push('/legal/privacy');
                         },
                       ),
                     ],
@@ -551,7 +543,53 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: 24),
-                  
+
+                  // About
+                  Container(
+                    decoration: AppTheme.darkCardDecoration,
+                    child: ListTile(
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Ionicons.information_circle_outline,
+                          color: theme.colorScheme.primary,
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        'About Bottles Up',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Version 1.0.0 • App info',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Ionicons.chevron_forward,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        size: 18,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      onTap: () {
+                        context.push('/about');
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
                   // Sign Out Button
                   SizedBox(
                     height: 56,
