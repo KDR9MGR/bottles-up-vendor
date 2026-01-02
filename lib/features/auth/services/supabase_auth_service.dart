@@ -87,6 +87,20 @@ class SupabaseAuthService {
     }
   }
 
+  // Delete account
+  Future<void> deleteAccount() async {
+    try {
+      // Call the database function to delete the account
+      // This function deletes the vendor record, which triggers the auth user deletion
+      await _client.rpc('delete_account');
+      
+      // Sign out
+      await signOut();
+    } catch (e) {
+      throw Exception('Failed to delete account: $e');
+    }
+  }
+
   // Reset password
   Future<void> resetPassword(String email) async {
     try {
