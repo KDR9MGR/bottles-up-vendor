@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/providers/supabase_auth_provider.dart';
+import '../../auth/services/supabase_auth_service.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -44,8 +45,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Implement profile update in Supabase
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      final currentUser = ref.read(currentVendorUserProvider);
+      if (currentUser == null) {
+        throw Exception('No user found');
+      }
+
+      // Update the vendor user with new data
+      final updatedUser = currentUser.copyWith(
+        businessName: _businessNameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        updatedAt: DateTime.now(),
+      );
+
+      // Call Supabase to update the profile
+      await ref.read(supabaseAuthServiceProvider).updateVendorUser(updatedUser);
+
+      // Refresh the auth state to get updated user data
+      ref.invalidate(currentVendorUserProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,55 +111,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             children: [
               // Profile Photo Section
               Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60),
-                        border: Border.all(
-                          color: theme.colorScheme.primary,
-                          width: 3,
-                        ),
-                      ),
-                      child: Icon(
-                        Ionicons.person,
-                        size: 60,
-                        color: theme.colorScheme.primary,
-                      ),
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    border: Border.all(
+                      color: theme.colorScheme.primary,
+                      width: 3,
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: theme.scaffoldBackgroundColor,
-                            width: 3,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            // TODO: Implement photo picker
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Photo upload - Coming Soon')),
-                            );
-                          },
-                          icon: const Icon(
-                            Ionicons.camera,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                  child: Icon(
+                    Ionicons.person,
+                    size: 60,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
               ),
 

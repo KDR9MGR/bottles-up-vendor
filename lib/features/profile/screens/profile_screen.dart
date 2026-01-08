@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/models/user_model.dart';
 import '../../auth/providers/supabase_auth_provider.dart';
+import '../../auth/services/supabase_auth_service.dart';
 import '../providers/profile_stats_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -45,16 +46,6 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings - Coming Soon')),
-              );
-            },
-            icon: const Icon(Ionicons.settings_outline),
-          ),
-        ],
       ),
       body: displayUser == null
           ? Center(
@@ -153,62 +144,29 @@ class ProfileScreen extends ConsumerWidget {
                     child: Column(
                       children: [
                         // Avatar with edit option
-                        Stack(
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: theme.colorScheme.primary,
-                                  width: 3,
-                                ),
-                              ),
-                              child: displayUser.logoUrl != null
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(47),
-                                      child: Image.network(
-                                        displayUser.logoUrl!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Ionicons.person,
-                                      size: 50,
-                                      color: theme.colorScheme.primary,
-                                    ),
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: theme.colorScheme.primary,
+                              width: 3,
                             ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
+                          ),
+                          child: displayUser.logoUrl != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(47),
+                                  child: Image.network(
+                                    displayUser.logoUrl!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Icon(
+                                  Ionicons.person,
+                                  size: 50,
                                   color: theme.colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: theme.scaffoldBackgroundColor,
-                                    width: 2,
-                                  ),
                                 ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Edit Photo - Coming Soon')),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Ionicons.camera,
-                                    size: 16,
-                                    color: theme.colorScheme.onPrimary,
-                                  ),
-                                  padding: EdgeInsets.zero,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                         const SizedBox(height: 20),
                         
@@ -346,11 +304,11 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   
                   const SizedBox(height: 24),
-                  
-                  // Quick Actions
+
+                  // Account Management
                   _buildSection(
                     context,
-                    'Quick Actions',
+                    'Account',
                     [
                       _buildActionTile(
                         context,
@@ -363,102 +321,23 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       _buildActionTile(
                         context,
-                        icon: Ionicons.business_outline,
-                        title: 'Business Details',
-                        subtitle: 'Manage business info',
+                        icon: Ionicons.calendar_outline,
+                        title: 'My Bookings',
+                        subtitle: 'View your booking history',
                         onTap: () {
-                          context.push('/profile/business');
-                        },
-                      ),
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.card_outline,
-                        title: 'Payment Methods',
-                        subtitle: 'Manage payment options',
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Payment Methods - Coming Soon')),
-                          );
+                          context.push('/bookings');
                         },
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
-                  // Account Settings
-                  _buildSection(
-                    context,
-                    'Account Settings',
-                    [
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.lock_closed_outline,
-                        title: 'Security',
-                        subtitle: 'Password & 2FA',
-                        onTap: () {
-                          context.push('/profile/security');
-                        },
-                      ),
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.notifications_outline,
-                        title: 'Notifications',
-                        subtitle: 'Manage your alerts',
-                        onTap: () {
-                          context.push('/profile/notifications');
-                        },
-                      ),
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.shield_checkmark_outline,
-                        title: 'Privacy',
-                        subtitle: 'Data & privacy settings',
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Privacy Settings - Coming Soon')),
-                          );
-                        },
-                      ),
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.language_outline,
-                        title: 'Language & Region',
-                        subtitle: 'English (US)',
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Language Settings - Coming Soon')),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
+
                   // Support & Legal
                   _buildSection(
                     context,
                     'Support & Legal',
                     [
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.help_circle_outline,
-                        title: 'Help Center',
-                        subtitle: 'FAQs & support',
-                        onTap: () {
-                          context.push('/support/help');
-                        },
-                      ),
-                      _buildActionTile(
-                        context,
-                        icon: Ionicons.chatbubble_outline,
-                        title: 'Contact Support',
-                        subtitle: 'Get help from our team',
-                        onTap: () {
-                          context.push('/support/contact');
-                        },
-                      ),
                       _buildActionTile(
                         context,
                         icon: Ionicons.document_text_outline,
@@ -479,76 +358,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Account Status (Onboarding Status)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: AppTheme.darkCardDecoration,
-                    child: Row(
-                      children: [
-                        Icon(
-                          displayUser.onboardingCompleted
-                              ? Ionicons.checkmark_circle
-                              : Ionicons.time_outline,
-                          color: displayUser.onboardingCompleted
-                              ? Colors.green
-                              : Colors.orange,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                displayUser.onboardingCompleted
-                                    ? 'Setup Complete'
-                                    : 'Setup Pending',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                displayUser.onboardingCompleted
-                                    ? 'Your account is fully set up'
-                                    : 'Complete setup to access all features',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (!displayUser.onboardingCompleted)
-                          FilledButton(
-                            onPressed: () {
-                              if (displayUser != null) {
-                                // Navigate to onboarding based on role
-                                final role = displayUser.role;
-                                final onboardingRoute = switch (role) {
-                                  'venue_owner' => '/onboarding/venue',
-                                  'organizer' => '/onboarding/organizer',
-                                  'promoter' => '/onboarding/promoter',
-                                  _ => '/onboarding/staff',
-                                };
-                                context.push(onboardingRoute);
-                              }
-                            },
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                            ),
-                            child: const Text('Verify'),
-                          ),
-                      ],
-                    ),
-                  ),
-                  
+
                   const SizedBox(height: 24),
 
                   // About
@@ -596,6 +406,33 @@ class ProfileScreen extends ConsumerWidget {
                   ),
 
                   const SizedBox(height: 24),
+
+                  // Delete Account Button
+                  SizedBox(
+                    height: 56,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showDeleteAccountDialog(context, ref),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: theme.colorScheme.error),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: Icon(
+                        Ionicons.trash_outline,
+                        color: theme.colorScheme.error,
+                      ),
+                      label: Text(
+                        'Delete Account',
+                        style: TextStyle(
+                          color: theme.colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
 
                   // Sign Out Button
                   SizedBox(
@@ -751,7 +588,7 @@ class ProfileScreen extends ConsumerWidget {
 
   Future<void> _showSignOutDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
-    
+
     final shouldSignOut = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -783,11 +620,81 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
     );
-    
+
     if (shouldSignOut == true) {
       await ref.read(supabaseAuthProvider.notifier).signOut();
       if (context.mounted) {
         context.go('/login');
+      }
+    }
+  }
+
+  Future<void> _showDeleteAccountDialog(BuildContext context, WidgetRef ref) async {
+    final theme = Theme.of(context);
+
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        icon: Icon(
+          Ionicons.warning_outline,
+          color: theme.colorScheme.error,
+          size: 32,
+        ),
+        title: const Text('Delete Account?'),
+        content: const Text(
+          'This action cannot be undone. All your data, including profile, events, and bookings will be permanently deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true && context.mounted) {
+      try {
+        // Show loading
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+
+        // Call delete account
+        await ref.read(supabaseAuthServiceProvider).deleteAccount();
+
+        if (context.mounted) {
+          // Pop loading
+          Navigator.pop(context);
+          // Navigate to login/splash
+          context.go('/');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          // Pop loading
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error deleting account: $e'),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        }
       }
     }
   }
